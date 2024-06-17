@@ -8,6 +8,10 @@ import ItemList from "./components/ItemList";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import Manager from "./components/Manager";
+import EditItem from "./components/EditItem";
+import SalesAnalysis from './components/SalesAnalysis';
+import SalesByDate from './components/SalesByDate';
+
 
 function App() {
   return (
@@ -22,6 +26,10 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/manager" element={<Manager />} />
+          <Route path="/edit-item/:itemId" element={<EditItem />} />
+          <Route path="/sales-analysis" element={<SalesAnalysis />} />
+          <Route path="/sales-by-date" element={<SalesByDate />} />
+          
         </Routes>
       </Router>
     </CartProvider>

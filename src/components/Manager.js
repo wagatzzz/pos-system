@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, query, where, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import Navbar from "./Navbar";
 import { onAuthStateChanged } from "firebase/auth";
@@ -50,8 +50,13 @@ const Manager = () => {
   };
 
   const handleDelete = async (itemId) => {
-    // Implement item deletion logic here
-    console.log("Delete item:", itemId);
+    try {
+      await deleteDoc(doc(db, "items", itemId));
+      setItems(items.filter(item => item.id !== itemId));
+      console.log("Item deleted successfully");
+    } catch (error) {
+      console.error("Error deleting item: ", error);
+    }
   };
 
   if (loading) {
@@ -70,6 +75,7 @@ const Manager = () => {
                 <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
                 <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
                 <p className="text-lg font-medium text-gray-700">KSH{parseFloat(item.price).toFixed(2)}</p>
+                <p className="text-lg font-medium text-gray-700">Quantity:{parseFloat(item.quantity)}</p>
                 <div className="flex justify-between mt-4">
                   <button
                     onClick={() => handleEdit(item.id)}

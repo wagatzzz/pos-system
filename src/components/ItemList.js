@@ -106,6 +106,7 @@ const ItemList = () => {
                 <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
                 <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
                 <p className="text-lg font-medium text-gray-700">KSH{parseFloat(item.price).toFixed(2)}</p>
+                <p className="text-lg font-medium text-gray-700">Quantity: {parseFloat(item.quantity)}</p>
               </div>
             ))}
           </div>

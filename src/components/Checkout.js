@@ -1,124 +1,174 @@
-import React, { useState } from "react";
-import { useCart } from "../contexts/CartContext";
-import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { onAuthStateChanged } from 'firebase/auth';
+import React, { useState, useEffect } from "react";
+import { db, auth } from "../firebase";
+import { collection, doc, runTransaction } from 'firebase/firestore';
+import { useCart } from '../contexts/CartContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Checkout = () => {
-  const { cart, getTotalPrice, clearCart } = useCart();
-  const [customerName, setCustomerName] = useState("");
-  const [customerNumber, setCustomerNumber] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [cashGiven, setCashGiven] = useState("");
+const Checkout = ({ onClose }) => {
+  const { cart, clearCart, getTotalPrice } = useCart();
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [cashGiven, setCashGiven] = useState('');
   const [balance, setBalance] = useState(0);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
-    if (e.target.value === "cash") {
+    if (e.target.value === 'cash') {
       setBalance(0);
     }
   };
 
   const handleCashGivenChange = (e) => {
-    const cash = parseFloat(e.target.value);
-    const total = getTotalPrice();
-    setCashGiven(cash);
-    setBalance(cash - total);
+    setCashGiven(e.target.value);
+    const totalPrice = getTotalPrice();
+    const balance = e.target.value - totalPrice;
+    setBalance(balance >= 0 ? balance : 0);
   };
 
   const handleCompleteCheckout = async () => {
+    const totalPrice = getTotalPrice();
+
+    if (!name || !number || !paymentMethod) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+
+    if (paymentMethod === 'cash' && cashGiven < totalPrice) {
+      toast.error('Insufficient cash given');
+      return;
+    }
+
+    const saleData = {
+      customerName: name,
+      customerNumber: number,
+      paymentMethod,
+      userId,
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      total: totalPrice,
+      timestamp: new Date(),
+    };
+
     try {
-      // Save the sale to the database
-      const saleRef = await addDoc(collection(db, "sales"), {
-        customerName,
-        customerNumber,
-        paymentMethod,
-        items: cart,
-        total: getTotalPrice(),
-        date: new Date(),
+      await runTransaction(db, async (transaction) => {
+        // Ensure all reads are performed before writes
+        const itemDocs = await Promise.all(cart.map(cartItem => transaction.get(doc(db, 'items', cartItem.id))));
+
+        for (const [index, cartItem] of cart.entries()) {
+          const itemDoc = itemDocs[index];
+
+          if (!itemDoc.exists()) {
+            throw new Error(`Item ${cartItem.name} does not exist in the database.`);
+          }
+
+          const newQuantity = itemDoc.data().quantity - cartItem.quantity;
+          if (newQuantity < 0) {
+            throw new Error(`Not enough stock for ${cartItem.name}.`);
+          }
+
+          transaction.update(doc(db, 'items', cartItem.id), { quantity: newQuantity });
+        }
+
+        const saleRef = doc(collection(db, 'sales'));
+        transaction.set(saleRef, saleData);
       });
 
-      // Update the item quantities in the database
-      for (const cartItem of cart) {
-        const itemRef = doc(db, "items", cartItem.id);
-        await updateDoc(itemRef, {
-          quantity: cartItem.quantity - 1,
-        });
-      }
-
-      // Clear the cart
       clearCart();
-      alert("Checkout completed successfully!");
+      toast.success('Checkout completed successfully');
+      if (onClose) {
+        onClose(); // Ensure onClose is defined before calling it
+      }
     } catch (error) {
-      console.error("Error completing checkout: ", error);
-      alert("Error completing checkout. Please try again.");
+      console.error('Error completing checkout:', error);
+      toast.error(`Error completing checkout: ${error.message}`);
     }
   };
 
   return (
-    <div className="bg-gray-200 p-6 rounded shadow-md mt-6">
-      <h2 className="text-xl font-bold mb-4">Checkout</h2>
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Customer Name</label>
-        <input
-          type="text"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          className="w-full p-3 border rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Customer Number</label>
-        <input
-          type="text"
-          value={customerNumber}
-          onChange={(e) => setCustomerNumber(e.target.value)}
-          className="w-full p-3 border rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Payment Method</label>
-        <div className="flex items-center space-x-4">
-          <label>
-            <input
-              type="radio"
-              value="cash"
-              checked={paymentMethod === "cash"}
-              onChange={handlePaymentMethodChange}
-            />
-            Cash
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="mpesa"
-              checked={paymentMethod === "mpesa"}
-              onChange={handlePaymentMethodChange}
-            />
-            Mpesa
-          </label>
-        </div>
-      </div>
-      {paymentMethod === "cash" && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Cash Given</label>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+        <label className="block mb-2">
+          Customer Name:
           <input
-            type="number"
-            value={cashGiven}
-            onChange={handleCashGivenChange}
-            className="w-full p-3 border rounded"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="block w-full p-2 border rounded mt-1"
           />
-          <div className="mt-2 text-lg">
-            Balance: KSH{balance.toFixed(2)}
+        </label>
+        <label className="block mb-2">
+          Customer Number:
+          <input
+            type="text"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+            className="block w-full p-2 border rounded mt-1"
+          />
+        </label>
+        <label className="block mb-2">
+          Payment Method:
+          <select
+            value={paymentMethod}
+            onChange={handlePaymentMethodChange}
+            className="block w-full p-2 border rounded mt-1"
+          >
+            <option value="">Select</option>
+            <option value="cash">Cash</option>
+            <option value="mpesa">M-Pesa</option>
+          </select>
+        </label>
+        {paymentMethod === 'cash' && (
+          <label className="block mb-2">
+            Cash Given:
+            <input
+              type="number"
+              value={cashGiven}
+              onChange={handleCashGivenChange}
+              className="block w-full p-2 border rounded mt-1"
+            />
+          </label>
+        )}
+        {paymentMethod === 'cash' && (
+          <div className="mb-2">
+            Balance: KSH {balance.toFixed(2)}
           </div>
+        )}
+        <div className="mb-4">
+          Total: KSH {getTotalPrice().toFixed(2)}
         </div>
-      )}
-      <div className="mt-6 text-right">
-        <button
-          onClick={handleCompleteCheckout}
-          className="bg-green-500 text-white px-6 py-3 rounded shadow-md hover:bg-green-600"
-        >
-          Complete Checkout
-        </button>
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={handleCompleteCheckout}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Complete Checkout
+          </button>
+          <button
+            onClick={onClose}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );

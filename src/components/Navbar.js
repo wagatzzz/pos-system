@@ -24,9 +24,10 @@ const Navbar = ({ userName }) => {
     <nav className="bg-blue-500 text-white p-4 flex justify-between items-center">
       <div className="flex items-center space-x-4">
         <span>WELCOME {userName}</span>
+        <Link to="/items" className="hover:text-gray-200">Shop</Link>
         <Link to="/manager" className="hover:text-gray-200">Inventory</Link>
-        <Link to="/analysis" className="hover:text-gray-200">Analysis</Link>
-        <Link to="/reports" className="hover:text-gray-200">Reports</Link>
+        <Link to="/sales-analysis" className="hover:text-gray-200">Analysis</Link>
+        <Link to="/sales-by-date" className="hover:text-gray-200">Reports</Link>
         <Link to="/clients" className="hover:text-gray-200">Clients</Link>
         <Link to="/recommender" className="hover:text-gray-200">Recommender</Link>
       </div>

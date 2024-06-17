@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import { FiMinus, FiPlus, FiX } from "react-icons/fi";
-import Checkout from "./Checkout";  // Import the Checkout component
+import Checkout from "./Checkout";
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, getTotalPrice } = useCart();
-  const [showCheckout, setShowCheckout] = useState(false);  // State to show/hide checkout
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const handleCheckout = () => {
     setShowCheckout(true);
+  };
+
+  const handleCloseCheckout = () => {
+    setShowCheckout(false);
   };
 
   return (
@@ -27,16 +31,11 @@ const Cart = () => {
                     <p className="text-lg">KSH{item.price.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center">
-                    <button 
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)} 
-                      disabled={item.quantity <= 1}
-                    >
+                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>
                       <FiMinus className="w-6 h-6" />
                     </button>
                     <span className="mx-2">{item.quantity}</span>
-                    <button 
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    >
+                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
                       <FiPlus className="w-6 h-6" />
                     </button>
                     <button onClick={() => removeFromCart(item.id)} className="ml-4">
@@ -60,8 +59,7 @@ const Cart = () => {
           </>
         )}
       </div>
-
-      {showCheckout && <Checkout />}  {/* Show the Checkout component if showCheckout is true */}
+      {showCheckout && <Checkout onClose={handleCloseCheckout} />}
     </div>
   );
 };
