@@ -1,5 +1,7 @@
 # Smart Sales and Inventory Tracker
 
+- [Live Link:](https://pos-system-2ca41.web.app)
+
 ## Project Overview
 
 The **Smart Sales and Inventory Tracker** is a web-based point of sale (POS) system designed to revolutionize how businesses manage their sales, inventory, and customer interactions. By leveraging automation, real-time data tracking, and advanced analytics, this system aims to enhance operational efficiency and decision-making capabilities.

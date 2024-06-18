@@ -42,6 +42,7 @@ const Checkout = ({ onClose }) => {
   const handleCompleteCheckout = async () => {
     const totalPrice = getTotalPrice();
 
+
     if (!name || !number || !paymentMethod) {
       toast.error('Please fill all required fields');
       return;
