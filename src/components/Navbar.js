@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
-import { FiShoppingCart, FiMenu } from "react-icons/fi";
+import { FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 
 const Navbar = ({ userName }) => {
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -20,23 +21,43 @@ const Navbar = ({ userName }) => {
     navigate("/cart");
   };
 
+  const toggleNavbar = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <nav className="bg-blue-500 text-white p-4 flex justify-between items-center">
+    <nav className="bg-blue-500 text-white p-4 flex justify-between items-center relative">
       <div className="flex items-center space-x-4">
-        <span>WELCOME {userName}</span>
-        <Link to="/items" className="hover:text-gray-200">Shop</Link>
-        <Link to="/manager" className="hover:text-gray-200">Inventory</Link>
-        <Link to="/sales-analysis" className="hover:text-gray-200">Analysis</Link>
-        <Link to="/sales-by-date" className="hover:text-gray-200">Reports</Link>
-        <Link to="/clients" className="hover:text-gray-200">Clients</Link>
-        <Link to="/recommender" className="hover:text-gray-200">Recommender</Link>
+        <span className="text-lg">WELCOME {userName}</span>
+        <div className="hidden md:flex space-x-4">
+          <Link to="/items" className="hover:text-gray-200">Shop</Link>
+          <Link to="/manager" className="hover:text-gray-200">Inventory</Link>
+          <Link to="/sales-analysis" className="hover:text-gray-200">Analysis</Link>
+          <Link to="/sales-by-date" className="hover:text-gray-200">Reports</Link>
+          <Link to="/clients" className="hover:text-gray-200">Clients</Link>
+          <Link to="/recommender" className="hover:text-gray-200">Recommender</Link>
+        </div>
       </div>
       <div className="flex items-center space-x-4">
         <FiShoppingCart 
           className="text-xl cursor-pointer hover:text-gray-200" 
           onClick={handleCartClick}
         />
-        <FiMenu className="text-xl cursor-pointer hover:text-gray-200" />
+        <div className="md:hidden">
+          <FiMenu className="text-xl cursor-pointer hover:text-gray-200" onClick={toggleNavbar} />
+        </div>
+        <button onClick={handleLogout} className="hidden md:inline hover:text-gray-200">Logout</button>
+      </div>
+
+      {/* Mobile Menu */}
+      <div className={`absolute top-0 left-0 w-full bg-blue-500 text-white flex flex-col items-center space-y-4 py-6 ${isOpen ? 'block' : 'hidden'} md:hidden`}>
+        <FiX className="text-xl cursor-pointer hover:text-gray-200 self-end mr-4" onClick={toggleNavbar} />
+        <Link to="/items" className="hover:text-gray-200" onClick={toggleNavbar}>Shop</Link>
+        <Link to="/manager" className="hover:text-gray-200" onClick={toggleNavbar}>Inventory</Link>
+        <Link to="/sales-analysis" className="hover:text-gray-200" onClick={toggleNavbar}>Analysis</Link>
+        <Link to="/sales-by-date" className="hover:text-gray-200" onClick={toggleNavbar}>Reports</Link>
+        <Link to="/clients" className="hover:text-gray-200" onClick={toggleNavbar}>Clients</Link>
+        <Link to="/recommender" className="hover:text-gray-200" onClick={toggleNavbar}>Recommender</Link>
         <button onClick={handleLogout} className="hover:text-gray-200">Logout</button>
       </div>
     </nav>

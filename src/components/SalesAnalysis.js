@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { Bar } from 'react-chartjs-2';
 import { onAuthStateChanged } from 'firebase/auth';
