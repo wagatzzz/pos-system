@@ -42,7 +42,6 @@ const Checkout = ({ onClose }) => {
   const handleCompleteCheckout = async () => {
     const totalPrice = getTotalPrice();
 
-
     if (!name || !number || !paymentMethod) {
       toast.error('Please fill all required fields');
       return;
@@ -105,32 +104,32 @@ const Checkout = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">Checkout</h2>
-        <label className="block mb-2">
-          Customer Name:
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4 text-emerald-700">Checkout</h2>
+        <label className="block mb-4">
+          <span className="text-sm text-gray-600">Customer Name:</span>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="block w-full p-2 border rounded mt-1"
+            className="block w-full p-2 border rounded mt-1 focus:outline-none focus:border-emerald-500"
           />
         </label>
-        <label className="block mb-2">
-          Customer Number:
+        <label className="block mb-4">
+          <span className="text-sm text-gray-600">Customer Number:</span>
           <input
             type="text"
             value={number}
             onChange={(e) => setNumber(e.target.value)}
-            className="block w-full p-2 border rounded mt-1"
+            className="block w-full p-2 border rounded mt-1 focus:outline-none focus:border-emerald-500"
           />
         </label>
-        <label className="block mb-2">
-          Payment Method:
+        <label className="block mb-4">
+          <span className="text-sm text-gray-600">Payment Method:</span>
           <select
             value={paymentMethod}
             onChange={handlePaymentMethodChange}
-            className="block w-full p-2 border rounded mt-1"
+            className="block w-full p-2 border rounded mt-1 focus:outline-none focus:border-emerald-500"
           >
             <option value="">Select</option>
             <option value="cash">Cash</option>
@@ -138,34 +137,34 @@ const Checkout = ({ onClose }) => {
           </select>
         </label>
         {paymentMethod === 'cash' && (
-          <label className="block mb-2">
-            Cash Given:
+          <label className="block mb-4">
+            <span className="text-sm text-gray-600">Cash Given:</span>
             <input
               type="number"
               value={cashGiven}
               onChange={handleCashGivenChange}
-              className="block w-full p-2 border rounded mt-1"
+              className="block w-full p-2 border rounded mt-1 focus:outline-none focus:border-emerald-500"
             />
           </label>
         )}
         {paymentMethod === 'cash' && (
-          <div className="mb-2">
-            Balance: KSH {balance.toFixed(2)}
+          <div className="mb-4">
+            <span className="text-sm text-gray-600">Balance:</span> KSH {balance.toFixed(2)}
           </div>
         )}
-        <div className="mb-4">
-          Total: KSH {getTotalPrice().toFixed(2)}
+        <div className="mb-6">
+          <span className="text-sm text-gray-600">Total:</span> KSH {getTotalPrice().toFixed(2)}
         </div>
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end space-x-4">
           <button
             onClick={handleCompleteCheckout}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-emerald-700 text-white px-4 py-2 rounded-md hover:bg-emerald-600 focus:outline-none focus:bg-emerald-600"
           >
             Complete Checkout
           </button>
           <button
             onClick={onClose}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
           >
             Cancel
           </button>

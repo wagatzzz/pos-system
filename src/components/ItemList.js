@@ -78,20 +78,20 @@ const ItemList = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar userName={userName} />
-      <div className="flex-grow bg-gray-100 p-8">
+      <div className="flex-grow p-8">
         <div className="w-full max-w-6xl mx-auto bg-white p-8 rounded shadow-md">
-          <h1 className="text-2xl font-bold mb-6">Items List</h1>
+          <h1 className="text-2xl font-bold mb-6 text-emerald-700">Items List</h1>
           <div className="flex justify-between items-center mb-6">
             <input
               type="text"
               placeholder="Search items..."
-              className="w-full p-3 border rounded"
+              className="w-full p-3 border hover:border-black rounded"
               value={searchQuery}
               onChange={handleSearch}
             />
             <button
               onClick={handleAddItem}
-              className="ml-4 bg-blue-500 text-white p-3 rounded shadow-md hover:bg-blue-600 flex items-center"
+              className="ml-4 bg-emerald-700 text-white p-3 rounded shadow-md hover:bg-emerald-900 flex items-center"
             >
               <FiPlus />
             </button>
@@ -99,15 +99,16 @@ const ItemList = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredItems.map(item => (
               <div
-                key={item.id}
-                className="border p-4 rounded bg-gray-50 cursor-pointer"
-                onClick={() => handleAddToCart(item)}
-              >
-                <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
-                <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
-                <p className="text-lg font-medium text-gray-700">KSH{parseFloat(item.price).toFixed(2)}</p>
-                <p className="text-lg font-medium text-gray-700">Quantity: {parseFloat(item.quantity)}</p>
-              </div>
+              key={item.id}
+              className="border p-4 rounded bg-white cursor-pointer hover:bg-gray-100 hover:shadow-lg transition duration-300"
+              onClick={() => handleAddToCart(item)}
+            >
+              <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
+              <h2 className="text-lg uppercase font-semibold mb-2 text-emerald-700 hover:text-emerald-800 transition duration-300">{item.name}</h2>
+              <p className="text-lg font-medium text-gray-700">KSH: {parseFloat(item.price).toFixed(2)}</p>
+              <p className="text-lg font-medium text-gray-700">Quantity: {parseFloat(item.quantity)}</p>
+            </div>
+            
             ))}
           </div>
         </div>

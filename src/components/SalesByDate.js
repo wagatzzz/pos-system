@@ -70,34 +70,36 @@ const SalesByDate = () => {
   }, [selectedDate, userId]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="text-center text-lg text-gray-700">Loading...</p>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-8">
-      <div className="w-full max-w-6xl bg-white p-8 rounded shadow-md">
-        <h1 className="text-2xl font-bold mb-6">Sales By Date</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
+      <div className="w-full max-w-4xl bg-white p-8 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold mb-6 text-emerald-700 text-center">Sales By Date</h1>
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
-          className="mb-6 p-2 border rounded"
+          className="mb-6 w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         <div className="mb-6">
-          <h2 className="text-xl font-bold">Sales on {selectedDate.toDateString()}</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Sales on {selectedDate.toDateString()}</h2>
           {sales.length > 0 ? (
-            <ul>
+            <ul className="space-y-4">
               {sales.map((sale, index) => (
-                <li key={index} className="border-b py-2">
-                  <p>Customer Name: {sale.customerName}</p>
-                  <p>Customer Number: {sale.customerNumber}</p>
-                  <p>Payment Method: {sale.paymentMethod}</p>
-                  <p>Total Amount: KSH {sale.total}</p>
-                  <ul>
+                <li key={index} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                  <div className="mb-4">
+                    <p className="font-semibold text-gray-800">Customer Name: <span className="text-emerald-700">{sale.customerName}</span></p>
+                    <p className="font-semibold text-gray-800">Customer Number: <span className="text-emerald-700">{sale.customerNumber}</span></p>
+                    <p className="font-semibold text-gray-800">Payment Method: <span className="text-emerald-700">{sale.paymentMethod}</span></p>
+                    <p className="font-semibold text-gray-800">Total Amount: <span className="text-emerald-700">KSH {sale.total}</span></p>
+                  </div>
+                  <ul className="pl-4 border-l-2 border-gray-300">
                     {sale.items.map((item, idx) => (
-                      <li key={idx} className="ml-4">
-                        <p>Item Name: {item.name}</p>
-                        <p>Price: KSH {item.price}</p>
-                        <p>Quantity: {item.quantity}</p>
+                      <li key={idx} className="mb-2">
+                        <p className="text-gray-700">Item Name: <span className="text-emerald-700 font-medium">{item.name}</span></p>
+                        <p className="text-gray-700">Price: <span className="text-emerald-700 font-medium">KSH {item.price}</span></p>
+                        <p className="text-gray-700">Quantity: <span className="text-emerald-700 font-medium">{item.quantity}</span></p>
                       </li>
                     ))}
                   </ul>
@@ -105,11 +107,11 @@ const SalesByDate = () => {
               ))}
             </ul>
           ) : (
-            <p>No sales found for this date.</p>
+            <p className="text-center text-gray-500">No sales found for this date.</p>
           )}
         </div>
-        <div>
-          <h2 className="text-xl font-bold">Total Amount: KSH {totalAmount}</h2>
+        <div className="mt-6">
+          <h2 className="text-2xl font-semibold text-gray-800">Total Amount: <span className="text-emerald-700">KSH {totalAmount}</span></h2>
         </div>
       </div>
     </div>

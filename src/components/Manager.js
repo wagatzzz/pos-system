@@ -66,12 +66,12 @@ const Manager = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar userName={userName} />
-      <div className="flex-grow bg-gray-100 p-8">
+      <div className="flex-grow p-8">
         <div className="w-full max-w-6xl mx-auto bg-white p-8 rounded shadow-md">
-          <h1 className="text-2xl font-bold mb-6">Inventory Manager</h1>
+          <h1 className="text-2xl font-bold mb-6 text-emerald-700">Inventory Manager</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {items.map(item => (
-              <div key={item.id} className="border p-4 rounded bg-gray-50">
+              <div key={item.id} className="border p-4 rounded bg-gray-50 hover:bg-gray-100 hover:shadow-lg transition duration-300">
                 <img src={item.image} alt={item.name} className="w-full h-48 object-cover mb-4 rounded" />
                 <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
                 <p className="text-lg font-medium text-gray-700">KSH{parseFloat(item.price).toFixed(2)}</p>
@@ -79,13 +79,13 @@ const Manager = () => {
                 <div className="flex justify-between mt-4">
                   <button
                     onClick={() => handleEdit(item.id)}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                    className="bg-emerald-700 text-white px-4 py-2 rounded hover:bg-emerald-900"
                   >
                     <FiEdit />
                   </button>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                   >
                     <FiTrash2 />
                   </button>

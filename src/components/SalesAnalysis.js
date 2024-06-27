@@ -102,8 +102,8 @@ const SalesAnalysis = () => {
       {
         label: 'Quantity Sold',
         data: Object.values(quantities),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(46, 204, 113, 0.6)', // emerald-700 color
+        borderColor: 'rgba(46, 204, 113, 1)', // emerald-700 color
         borderWidth: 1,
       },
     ],
@@ -128,29 +128,52 @@ const SalesAnalysis = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8">
       <div className="w-full max-w-6xl bg-white p-8 rounded shadow-md">
-        <h1 className="text-2xl font-bold mb-6">Sales Analysis</h1>
+        <h1 className="text-2xl font-bold mb-6 text-emerald-700">Sales Analysis</h1>
         <Bar data={data} options={options} />
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">Statistics</h2>
-          <p>Most Sold Item: {mostSoldItem}</p>
-          <p>Item with Highest Quantity in Stock: {highestQuantityItem?.name} ({highestQuantityItem?.quantity})</p>
-          <p>Item with Lowest Quantity in Stock: {lowestQuantityItem?.name} ({lowestQuantityItem?.quantity})</p>
-          <p>Item with Highest Price: {highestPriceItem?.name} (KSH {highestPriceItem?.price})</p>
-          <p>Item with Lowest Price: {lowestPriceItem?.name} (KSH {lowestPriceItem?.price})</p>
-          <p>Number of Items in stock: {itemsInStock}</p>
-          <h3 className="text-lg font-bold mt-4">Items with 0 Quantity:</h3>
-          {zeroQuantityItems.length > 0 ? (
-            <ul>
-              {zeroQuantityItems.map((item, index) => (
-                <li key={index}>{item.name}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>No items with 0 quantity</p>
-          )}
-        </div>
+        <div className="mt-8 bg-gray-100 rounded-lg p-6">
+  <h2 className="text-2xl font-bold mb-4 text-emerald-700">Statistics</h2>
+  
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <p className="text-lg font-medium text-gray-800">
+        Most Sold Item: <span className="text-emerald-700">{mostSoldItem}</span>
+      </p>
+      <p className="text-lg font-medium text-gray-800">
+        Item with Highest Quantity in Stock: <span className="text-emerald-700">{highestQuantityItem?.name} ({highestQuantityItem?.quantity})</span>
+      </p>
+      <p className="text-lg font-medium text-gray-800">
+        Item with Lowest Quantity in Stock: <span className="text-emerald-700">{lowestQuantityItem?.name} ({lowestQuantityItem?.quantity})</span>
+      </p>
+      <p className="text-lg font-medium text-gray-800">
+        Number of Items in Stock: <span className="text-emerald-700">{itemsInStock}</span>
+      </p>
+    </div>
+    
+    <div>
+      <p className="text-lg font-medium text-gray-800">
+        Item with Highest Price: <span className="text-emerald-700">{highestPriceItem?.name} (KSH {highestPriceItem?.price})</span>
+      </p>
+      <p className="text-lg font-medium text-gray-800">
+        Item with Lowest Price: <span className="text-emerald-700">{lowestPriceItem?.name} (KSH {lowestPriceItem?.price})</span>
+      </p>
+      <h3 className="text-xl font-bold mt-4 text-emerald-700">Items with 0 Quantity:</h3>
+      {zeroQuantityItems.length > 0 ? (
+        <ul className="list-disc pl-4">
+          {zeroQuantityItems.map((item, index) => (
+            <li key={index} className="text-lg font-medium text-gray-800">
+              {item.name}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-lg font-medium text-gray-800">No items with 0 quantity</p>
+      )}
+    </div>
+  </div>
+</div>
+
       </div>
     </div>
   );

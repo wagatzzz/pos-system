@@ -15,7 +15,8 @@ import SalesByDate from './components/SalesByDate';
 
 function App() {
   return (
-    <CartProvider>
+    <div className="bg-white min-h-screen">
+      <CartProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -33,6 +34,8 @@ function App() {
         </Routes>
       </Router>
     </CartProvider>
+    </div>
+    
   );
 }
 

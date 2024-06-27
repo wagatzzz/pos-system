@@ -65,7 +65,7 @@ const EditItem = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="w-full max-w-lg bg-white p-8 rounded shadow-md">
-        <h1 className="text-2xl font-bold mb-6">Edit Item</h1>
+        <h1 className="text-2xl font-bold mb-6 text-emerald-700">Edit Item</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>
@@ -74,7 +74,7 @@ const EditItem = () => {
               name="name"
               value={item.name}
               onChange={handleChange}
-              className="w-full p-3 border rounded"
+              className="w-full p-3 border hover:border-black rounded"
             />
           </div>
           <div className="mb-4">
@@ -84,7 +84,7 @@ const EditItem = () => {
               name="price"
               value={item.price}
               onChange={handleChange}
-              className="w-full p-3 border rounded"
+              className="w-full p-3 border hover:border-black rounded"
             />
           </div>
           <div className="mb-4">
@@ -94,12 +94,12 @@ const EditItem = () => {
               name="quantity"
               value={item.quantity}
               onChange={handleChange}
-              className="w-full p-3 border rounded"
+              className="w-full p-3 border hover:border-black rounded"
             />
           </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white p-3 rounded shadow-md hover:bg-blue-600"
+            className="bg-emerald-700 hover:bg-emerald-900 text-white p-3 rounded shadow-md"
           >
             Update Item
           </button>
