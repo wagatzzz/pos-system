@@ -26,8 +26,8 @@ const Login = () => {
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <p className="mb-2 text-sm text-gray-500">You can Login with the following to see an already active account or make your own account from scratch:</p>
-            <p className="text-sm italic text-gray-500">Email: peter@gmail.com</p>
-            <p className="text-sm italic text-gray-500">Password: 123456</p>
+            <p className="text-sm italic text-gray-500">email: peter@gmail.com</p>
+            <p className="text-sm italic text-gray-500">password: 123456</p>
 
 
             <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
