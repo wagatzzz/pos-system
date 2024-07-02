@@ -25,7 +25,7 @@ To develop a web-based point of sale system with improved inventory management c
    
 4. **Facilitate efficient and secure payment processing**, streamlining the shopping experience and expanding payment options for customers while ensuring transaction security.
    
-5. **Implement customer recommendation features** within the point-of-sale system, enabling the system to suggest complementary products based on customer preferences and purchase history.
+5. **Have a very responsive design to support different devices** the website is crafted to dynamically adjust its layout and elements to provide an optimal viewing experience across various devices and screen sizes. This ensures usability and accessibility whether your users are accessing your POS system on desktops, laptops, tablets, or smartphones.
 
 
 
