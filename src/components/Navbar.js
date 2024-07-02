@@ -40,7 +40,6 @@ const Navbar = ({ userName }) => {
           <Link to="/manager" className="hover:text-gray-200">Inventory</Link>
           <Link to="/sales-analysis" className="hover:text-gray-200">Analysis</Link>
           <Link to="/sales-by-date" className="hover:text-gray-200">Reports</Link>
-          <Link to="/recommender" className="hover:text-gray-200">Recommender</Link>
         </div>
       </div>
       <div className="flex items-center space-x-4">
