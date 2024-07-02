@@ -6,6 +6,7 @@ import { useCart } from '../contexts/CartContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const Checkout = ({ onClose }) => {
   const { cart, clearCart, getTotalPrice } = useCart();
   const [name, setName] = useState('');
@@ -41,14 +42,19 @@ const Checkout = ({ onClose }) => {
 
   const handleCompleteCheckout = async () => {
     const totalPrice = getTotalPrice();
-
+  
     if (!name || !number || !paymentMethod) {
       toast.error('Please fill all required fields');
       return;
     }
-
+  
     if (paymentMethod === 'cash' && cashGiven < totalPrice) {
       toast.error('Insufficient cash given');
+      return;
+    }
+  
+    if (paymentMethod === 'mpesa') {
+      pay()
       return;
     }
 
@@ -102,6 +108,41 @@ const Checkout = ({ onClose }) => {
     }
   };
 
+  function pay() {
+    var url = "http://localhost:3001/initiatePayment"; // Replace with your backend server URL
+  
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Apikey': 'Me3s8tLM8vW', // Add your API key here if required
+      },
+      body: JSON.stringify({
+        amount: 1,
+        msisdn: '0112437244',
+        account_no: 200,
+      }),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json(); // Assuming the response is JSON
+    })
+    .then(data => {
+      console.log("Payment initialized successfully:", data);
+      // Handle further processing or UI updates based on the response
+    })
+    .catch(error => {
+      console.error("Error initiating payment:", error);
+      // Handle errors gracefully, e.g., show error message to the user
+    });
+  }
+  
+  
+
+
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
@@ -133,7 +174,7 @@ const Checkout = ({ onClose }) => {
           >
             <option value="">Select</option>
             <option value="cash">Cash</option>
-            <option value="mpesa">M-Pesa</option>
+            <option value="mpesa">M-Pesa (under development)</option>
           </select>
         </label>
         {paymentMethod === 'cash' && (
