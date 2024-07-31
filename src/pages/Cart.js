@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import { FiMinus, FiPlus, FiX } from "react-icons/fi";
-import Checkout from "./Checkout";
+import Checkout from "../components/Checkout";
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, getTotalPrice } = useCart();

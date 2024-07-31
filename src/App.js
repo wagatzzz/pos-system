@@ -1,16 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./contexts/CartContext";
-import SignUp from "./components/SignUp";
-import Login from "./components/Login";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
 import ItemForm from "./components/ItemForm";
-import ItemList from "./components/ItemList";
-import Cart from "./components/Cart";
+import ItemList from "./pages/ItemList";
+import Cart from "./pages/Cart";
 import Checkout from "./components/Checkout";
-import Manager from "./components/Manager";
+import Manager from "./pages/Manager";
 import EditItem from "./components/EditItem";
-import SalesAnalysis from './components/SalesAnalysis';
-import SalesByDate from './components/SalesByDate';
+import SalesAnalysis from './pages/SalesAnalysis';
+import SalesByDate from './pages/SalesByDate';
 
 
 function App() {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { fetchSalesByDate } from '../services/firebaseServices';
+import { auth } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -30,29 +30,17 @@ const SalesByDate = () => {
 
       setLoading(true);
 
-      // Get the start and end timestamps for the selected date
       const startDate = new Date(selectedDate);
       startDate.setHours(0, 0, 0, 0);
       const endDate = new Date(startDate);
       endDate.setDate(endDate.getDate() + 1);
 
       try {
-        const q = query(
-          collection(db, 'sales'),
-          where('userId', '==', userId),
-          where('timestamp', '>=', startDate),
-          where('timestamp', '<', endDate)
-        );
+        const salesList = await fetchSalesByDate(userId, startDate, endDate);
 
-        const querySnapshot = await getDocs(q);
-
-        const salesList = [];
         let total = 0;
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          salesList.push(data);
-          total += data.total;
+        salesList.forEach((sale) => {
+          total += sale.total;
         });
 
         setSales(salesList);

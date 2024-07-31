@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, doc, getDoc, query, where, deleteDoc } from "firebase/firestore";
-import { db, auth } from "../firebase";
-import Navbar from "./Navbar";
-import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { observeAuthState, fetchItems, fetchUserDetails, deleteItem } from "../services/firebaseServices";
+import Navbar from "../components/layout/Navbar";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 const Manager = () => {
@@ -13,14 +11,9 @@ const Manager = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchItems = async (userId) => {
+    const fetchAndSetItems = async (userId) => {
       try {
-        const q = query(collection(db, "items"), where("userId", "==", userId));
-        const querySnapshot = await getDocs(q);
-        const itemsList = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const itemsList = await fetchItems(userId);
         setItems(itemsList);
         setLoading(false);
       } catch (error) {
@@ -28,13 +21,17 @@ const Manager = () => {
       }
     };
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          setUserName(userDoc.data().name);
+    const unsubscribe = observeAuthState(async (userId) => {
+      if (userId) {
+        try {
+          const userDetails = await fetchUserDetails(userId);
+          if (userDetails) {
+            setUserName(userDetails.name);
+          }
+          fetchAndSetItems(userId);
+        } catch (error) {
+          console.error("Error fetching user details: ", error);
         }
-        fetchItems(user.uid);
       } else {
         setUserName("");
         setItems([]);
@@ -51,7 +48,7 @@ const Manager = () => {
 
   const handleDelete = async (itemId) => {
     try {
-      await deleteDoc(doc(db, "items", itemId));
+      await deleteItem(itemId);
       setItems(items.filter(item => item.id !== itemId));
       console.log("Item deleted successfully");
     } catch (error) {

@@ -1,7 +1,7 @@
+// components/Login.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { login } from "../services/authServices";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await login(email, password);
       navigate("/items"); // Redirect to add-item page after successful login
     } catch (err) {
       setError(err.message);
@@ -28,8 +28,6 @@ const Login = () => {
             <p className="mb-2 text-sm text-gray-500">You can Login with the following to see an already active account or make your own account from scratch:</p>
             <p className="text-sm italic text-gray-500">email: peter@gmail.com</p>
             <p className="text-sm italic text-gray-500">password: 123456</p>
-
-
             <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
@@ -43,7 +41,7 @@ const Login = () => {
             <label className="block mb-2 text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
-              className="w-full p-3 border  hover:border-black rounded"
+              className="w-full p-3 border hover:border-black rounded"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

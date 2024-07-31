@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { collection, addDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { db, auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { addItem, observeAuthState } from "../services/firebaseServices";
 
 const ItemForm = () => {
   const [image, setImage] = useState("");
@@ -15,21 +13,14 @@ const ItemForm = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        setUserId(null);
-      }
-    });
-
+    const unsubscribe = observeAuthState(setUserId);
     return () => unsubscribe();
   }, []);
 
   const handleAddItem = async (e) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, "items"), {
+      await addItem({
         image,
         category,
         name,
@@ -50,9 +41,10 @@ const ItemForm = () => {
         <h1 className="text-2xl font-bold mb-6 text-emerald-700">Add Item</h1>
         <form onSubmit={handleAddItem}>
           <div className="mb-4">
-            <p className="mb-2 text-sm text-gray-500">Please use the following placeholder for image URL since I have not yet worked on adding an image:</p>
+            <p className="mb-2 text-sm text-gray-500">
+              Please use the following placeholder for image URL since I have not yet worked on adding an image:
+            </p>
             <p className="mb-4 text-sm italic text-gray-500">https://placehold.co/150x150/png</p>
-
             <label className="block mb-2 text-sm font-medium text-gray-700">Image URL</label>
             <input
               type="text"

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { fetchSales, fetchItems } from '../services/firebaseServices';
 import { Bar } from 'react-chartjs-2';
 import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
 import 'chart.js/auto';
 
 const SalesAnalysis = () => {
@@ -20,9 +20,7 @@ const SalesAnalysis = () => {
   useEffect(() => {
     const fetchSalesData = async (userId) => {
       try {
-        const q = query(collection(db, 'sales'), where('userId', '==', userId));
-        const querySnapshot = await getDocs(q);
-        const salesList = querySnapshot.docs.map(doc => doc.data());
+        const salesList = await fetchSales(userId);
         setSalesData(salesList);
       } catch (error) {
         console.error('Error fetching sales data: ', error);
@@ -31,9 +29,7 @@ const SalesAnalysis = () => {
 
     const fetchItemsData = async () => {
       try {
-        const itemsQuery = query(collection(db, 'items'), where('userId', '==', userId));
-        const querySnapshot = await getDocs(itemsQuery);
-        const itemsList = querySnapshot.docs.map(doc => doc.data());
+        const itemsList = await fetchItems(userId);
 
         const highestQuantityItem = itemsList.reduce((max, item) => item.quantity > max.quantity ? item : max, itemsList[0]);
         const lowestQuantityItem = itemsList.reduce((min, item) => item.quantity < min.quantity ? item : min, itemsList[0]);
@@ -133,47 +129,46 @@ const SalesAnalysis = () => {
         <h1 className="text-2xl font-bold mb-6 text-emerald-700">Sales Analysis</h1>
         <Bar data={data} options={options} />
         <div className="mt-8 bg-gray-100 rounded-lg p-6">
-  <h2 className="text-2xl font-bold mb-4 text-emerald-700">Statistics</h2>
-  
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div>
-      <p className="text-lg font-medium text-gray-800">
-        Most Sold Item: <span className="text-emerald-700">{mostSoldItem}</span>
-      </p>
-      <p className="text-lg font-medium text-gray-800">
-        Item with Highest Quantity in Stock: <span className="text-emerald-700">{highestQuantityItem?.name} ({highestQuantityItem?.quantity})</span>
-      </p>
-      <p className="text-lg font-medium text-gray-800">
-        Item with Lowest Quantity in Stock: <span className="text-emerald-700">{lowestQuantityItem?.name} ({lowestQuantityItem?.quantity})</span>
-      </p>
-      <p className="text-lg font-medium text-gray-800">
-        Number of Items in Stock: <span className="text-emerald-700">{itemsInStock}</span>
-      </p>
-    </div>
-    
-    <div>
-      <p className="text-lg font-medium text-gray-800">
-        Item with Highest Price: <span className="text-emerald-700">{highestPriceItem?.name} (KSH {highestPriceItem?.price})</span>
-      </p>
-      <p className="text-lg font-medium text-gray-800">
-        Item with Lowest Price: <span className="text-emerald-700">{lowestPriceItem?.name} (KSH {lowestPriceItem?.price})</span>
-      </p>
-      <h3 className="text-xl font-bold mt-4 text-emerald-700">Items with 0 Quantity:</h3>
-      {zeroQuantityItems.length > 0 ? (
-        <ul className="list-disc pl-4">
-          {zeroQuantityItems.map((item, index) => (
-            <li key={index} className="text-lg font-medium text-gray-800">
-              {item.name}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-lg font-medium text-gray-800">No items with 0 quantity</p>
-      )}
-    </div>
-  </div>
-</div>
-
+          <h2 className="text-2xl font-bold mb-4 text-emerald-700">Statistics</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <p className="text-lg font-medium text-gray-800">
+                Most Sold Item: <span className="text-emerald-700">{mostSoldItem}</span>
+              </p>
+              <p className="text-lg font-medium text-gray-800">
+                Item with Highest Quantity in Stock: <span className="text-emerald-700">{highestQuantityItem?.name} ({highestQuantityItem?.quantity})</span>
+              </p>
+              <p className="text-lg font-medium text-gray-800">
+                Item with Lowest Quantity in Stock: <span className="text-emerald-700">{lowestQuantityItem?.name} ({lowestQuantityItem?.quantity})</span>
+              </p>
+              <p className="text-lg font-medium text-gray-800">
+                Number of Items in Stock: <span className="text-emerald-700">{itemsInStock}</span>
+              </p>
+            </div>
+            
+            <div>
+              <p className="text-lg font-medium text-gray-800">
+                Item with Highest Price: <span className="text-emerald-700">{highestPriceItem?.name} (KSH {highestPriceItem?.price})</span>
+              </p>
+              <p className="text-lg font-medium text-gray-800">
+                Item with Lowest Price: <span className="text-emerald-700">{lowestPriceItem?.name} (KSH {lowestPriceItem?.price})</span>
+              </p>
+              <h3 className="text-xl font-bold mt-4 text-emerald-700">Items with 0 Quantity:</h3>
+              {zeroQuantityItems.length > 0 ? (
+                <ul className="list-disc pl-4">
+                  {zeroQuantityItems.map((item, index) => (
+                    <li key={index} className="text-lg font-medium text-gray-800">
+                      {item.name}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-lg font-medium text-gray-800">No items with 0 quantity</p>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

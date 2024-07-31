@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { fetchItem, updateItem } from "../services/firebaseServices";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,14 +11,10 @@ const EditItem = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchItem = async () => {
+    const fetchItemData = async () => {
       try {
-        const itemDoc = await getDoc(doc(db, "items", itemId));
-        if (itemDoc.exists()) {
-          setItem(itemDoc.data());
-        } else {
-          console.error("No such document!");
-        }
+        const itemData = await fetchItem(itemId);
+        setItem(itemData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching item: ", error);
@@ -27,13 +22,11 @@ const EditItem = () => {
       }
     };
 
-    fetchItem();
+    fetchItemData();
   }, [itemId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Handle conversion to number for price and quantity fields
     const updatedValue = name === 'price' || name === 'quantity' ? parseFloat(value) : value;
 
     setItem(prevState => ({
@@ -45,7 +38,7 @@ const EditItem = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateDoc(doc(db, "items", itemId), item);
+      await updateItem(itemId, item);
       toast.success("Item updated successfully!");
       navigate("/manager");
     } catch (error) {
